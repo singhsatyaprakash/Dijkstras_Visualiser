@@ -4,39 +4,44 @@ import GraphVisualization from './components/GraphVisualization.jsx';
 import { dijkstraStepByStep, reconstructPath } from './utils/dijkstra.js';
 import { useSocket, sendMessage } from './utils/socket.js';
 
-import {
-  NODE_RADIUS,
-  COMPLEX_GRAPH,
-  SIMPLE_GRAPH,
-  COMPLEX_NODE_POSITIONS,
-  SIMPLE_NODE_POSITIONS,
-} from './utils/graphData.js';
+import {nodeRaidus,complexGraph,simpleGraph,complexGraphNodePositions,simpleGraphNodePostions} from './utils/graphData.js';
 
 function App() {
-  const [graphType, setGraphType] = useState('simple');
-  const [graphData, setGraphData] = useState(SIMPLE_GRAPH);
-  const [nodePositions, setNodePositions] = useState(SIMPLE_NODE_POSITIONS);
-  const [startNode, setStartNode] = useState(null);
-  const [targetNode, setTargetNode] = useState(null);
+  //graph intilization setup...
+  const [graphType, setGraphType] = useState('simple'); // choose graph which have to visualize...default is simple
+  const [graphData, setGraphData] = useState(simpleGraph);
+  const [nodePositions, setNodePositions] = useState(simpleGraphNodePostions);
+  const [startNode, setStartNode] = useState(null);//choose source node
+  const [targetNode, setTargetNode] = useState(null);//choose destination node
+
   const [dijkstraState, setDijkstraState] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
-  const [speed, setSpeed] = useState(500);
+
+  const [speed, setSpeed] = useState(500);//visualization speed
+  
   const [finalPath, setFinalPath] = useState([]);
-  const [socketStatus, setSocketStatus] = useState('offline');
-  const [isSocketConnected, setIsSocketConnected] = useState(false);
+
+  const [socketStatus, setSocketStatus] = useState('offline');//connectivity with socket...
+
+  const [isSocketConnected, setIsSocketConnected] = useState(false);//intitally socket is not connected to send the message...
+
   const [message, setMessage] = useState('');
-  const [messageStatus, setMessageStatus] = useState({ text: 'Idle', type: 'info' });
+
+  const [messageStatus, setMessageStatus] = useState({ text: 'Idle', type: 'info' });//???
+
   const [receivedMessages, setReceivedMessages] = useState([]);
-  const dijkstraGeneratorRef = useRef(null);
-  const intervalIdRef = useRef(null);
+  
+  const dijkstraGeneratorRef = useRef(null);//??
+
+  const intervalIdRef = useRef(null);//??
 
   // Log receivedMessages changes
   useEffect(() => {
     console.log('App.jsx receivedMessages updated:', receivedMessages);
   }, [receivedMessages]);
 
-  // Socket.IO Hook
+  // Socket.IO Hook    ///????
   const socketRef = useSocket(
     graphData,
     setSocketStatus,
@@ -45,19 +50,19 @@ function App() {
     setReceivedMessages
   );
 
-  // Update graph data when graph type changes
+  //render the page when graph type is changed from simple to complex or vice versa...
   useEffect(() => {
     if (graphType === 'simple') {
-      setGraphData(SIMPLE_GRAPH);
-      setNodePositions(SIMPLE_NODE_POSITIONS);
+      setGraphData(simpleGraph);
+      setNodePositions(simpleGraphNodePostions);
     } else {
-      setGraphData(COMPLEX_GRAPH);
-      setNodePositions(COMPLEX_NODE_POSITIONS);
+      setGraphData(complexGraph);
+      setNodePositions(complexGraphNodePositions);
     }
     setStartNode(null);
     setTargetNode(null);
-    reset(false);
-  }, [graphType]);
+    reset(false);///???
+  }, [graphType]);//on change of graph type
 
   // Core Logic
   const startDijkstra = () => {
@@ -243,7 +248,7 @@ function App() {
         <GraphVisualization
           graphData={graphData}
           nodePositions={nodePositions}
-          nodeRadius={NODE_RADIUS}
+          nodeRadius={nodeRaidus}
           startNode={startNode}
           targetNode={targetNode}
           dijkstraState={dijkstraState}
